@@ -33,14 +33,14 @@ object ThiefActor {
         replyTo ! DefResponse(GraphOps.findNearestNodeWithValue(GraphOps.getThiefNode))
         Behaviors.same
       case FindPolice(replyTo) =>
-        replyTo ! DefResponse(s"Police is at node ${GraphOps.getPoliceNode.id}")
+        replyTo ! DefResponse(NGSConstants.OTHER_PLAYER_LOCATION(GraphOps.getPoliceNode.id, NGSConstants.POLICE))
         Behaviors.same
       case Strategy(str, replyTo) =>
-        if (str == "safe" || str == "random") {
-          replyTo ! DefResponse(s"Playing with strategy: ${str}")
+        if (str == NGSConstants.SAFE || str == NGSConstants.RANDOM) {
+          replyTo ! DefResponse(NGSConstants.PLAYING_WITH_STRATEGY(str))
           GraphOps.initializeStrategy(isThief = true, str)
         } else {
-          replyTo ! DefResponse("Enter a valid strategy")
+          replyTo ! DefResponse(NGSConstants.ENTER_VALID_STRATEGY)
         }
         Behaviors.same
       case Result(replyTo) =>
@@ -48,10 +48,10 @@ object ThiefActor {
           if (GraphOps.result.nonEmpty) {
             replyTo ! DefResponse(GraphOps.result.last)
           } else {
-            replyTo ! DefResponse("Still playing game")
+            replyTo ! DefResponse(NGSConstants.STILL_PLAYING_GAME)
           }
         } else {
-          replyTo ! DefResponse("Set a strategy first")
+          replyTo ! DefResponse(NGSConstants.SET_STRATEGY_FIRST)
         }
         Behaviors.same
     }

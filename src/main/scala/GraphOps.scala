@@ -1,4 +1,5 @@
 import NetGraphAlgebraDefs.{NetGraph, NodeObject}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -8,8 +9,10 @@ import scala.util.Random
 import scala.jdk.CollectionConverters._
 
 object GraphOps {
-  val originalGraph: NetGraph = NetGraph.load(dir="", fileName = "original.json").get
-  val perturbedGraph: NetGraph = NetGraph.load(dir="", fileName = "perturbed.json").get
+  val logger: Logger = LoggerFactory.getLogger(GraphOps.getClass)
+
+  val originalGraph: NetGraph = NetGraph.load(dir="", fileName = NGSConstants.ORIGINAL_GRAPH).get
+  val perturbedGraph: NetGraph = NetGraph.load(dir="", fileName = NGSConstants.PERTURBED_GRAPH).get
 
   val policeNodes: ArrayBuffer[NodeObject] = ArrayBuffer[NodeObject]()
   val thiefNodes: ArrayBuffer[NodeObject] = ArrayBuffer[NodeObject]()
@@ -40,12 +43,12 @@ object GraphOps {
 
   def playWithStrategy(): Unit = {
     if(thiefNodes.length <= policeNodes.length && thiefStrategy.nonEmpty) {
-      if(thiefStrategy.last == "safe") Strategies.SafeStrategy(true)
-      if(thiefStrategy.last == "random") Strategies.RandomStrategy(true)
+      if(thiefStrategy.last == NGSConstants.SAFE) Strategies.SafeStrategy(true)
+      if(thiefStrategy.last == NGSConstants.RANDOM) Strategies.RandomStrategy(true)
     }
     if(policeNodes.length <= thiefNodes.length && policeStrategy.nonEmpty){
-      if (policeStrategy.last == "safe") Strategies.SafeStrategy(false)
-      if (policeStrategy.last == "random") Strategies.RandomStrategy(false)
+      if (policeStrategy.last == NGSConstants.SAFE) Strategies.SafeStrategy(false)
+      if (policeStrategy.last == NGSConstants.RANDOM) Strategies.RandomStrategy(false)
     }
 
     if(result.isEmpty && thiefStrategy.nonEmpty && policeStrategy.nonEmpty) {
@@ -87,7 +90,7 @@ object GraphOps {
   }
 
   def initializePolice(): String = {
-    println("Initializing police")
+    logger.info("Initializing police")
     policeNodes.addOne(
       commonNodes (
         Random.nextInt(commonNodes.length)
@@ -95,19 +98,21 @@ object GraphOps {
 
     if (this.arePoliceAndThiefOnTheSameNode()) {
       gameOver()
-      return "Police found thief. Police wins"
+      result.addOne(NGSConstants.POLICE_FOUND_THIEF)
+      return NGSConstants.POLICE_FOUND_THIEF
     }
 
     if (this.noMovesAvailable(policeNodes.last)) {
       gameOver()
-      return "No moves available for police. Police loses."
+      result.addOne(NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.POLICE))
+      return NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.POLICE)
     }
 
-    "Initialized Police"
+    NGSConstants.INITIALIZED_POLICE
   }
 
   def initializeThief(): String = {
-    println("Initializing Thief")
+    logger.info("Initializing Thief")
     thiefNodes.addOne(
       commonNodes (
           Random.nextInt(commonNodes.length)
@@ -116,82 +121,92 @@ object GraphOps {
 
     if (this.arePoliceAndThiefOnTheSameNode()) {
       gameOver()
-      return "Police found thief. Police wins"
+      result.addOne(NGSConstants.POLICE_FOUND_THIEF)
+      return NGSConstants.POLICE_FOUND_THIEF
     }
 
     if (this.thiefFoundValuableData()) {
       gameOver()
-      return "Thief found valuable data. Thief wins"
+      result.addOne(NGSConstants.THIEF_FOUND_DATA)
+      return NGSConstants.THIEF_FOUND_DATA
     }
 
     if (this.noMovesAvailable(thiefNodes.last)) {
       gameOver()
-      return "No moves available for thief. Thief loses."
+      result.addOne(NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.THIEF))
+      return NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.THIEF)
     }
 
-    "Initialized Thief"
+    NGSConstants.INITIALIZED_THIEF
   }
 
   def movePoliceToNode(node_id: Int): String = {
-    if(policeNodes.size > thiefNodes.size) return "Thief's turn"
+    if(policeNodes.size > thiefNodes.size) return NGSConstants.THIEF_TURN
 
     if(GraphOps.possibleNextMoves(GraphOps.getPoliceNode).keys.toList.contains(node_id.toString)) {
       if(!GraphOps.canMoveBePerformedInOriginalGraph(GraphOps.getPoliceNode, node_id)) {
         gameOver()
-        return "Move cannot be performed. Police loses"
+        result.addOne(NGSConstants.MOVE_CANNOT_BE_PERFORMED(NGSConstants.POLICE))
+        return NGSConstants.MOVE_CANNOT_BE_PERFORMED(NGSConstants.POLICE)
       }
 
       policeNodes.addOne(perturbedGraph.sm.nodes().asScala.filter(node => node_id == node.id).head)
 
       if (this.arePoliceAndThiefOnTheSameNode()) {
         gameOver()
-        return "Police found thief. Police wins"
+        result.addOne(NGSConstants.POLICE_FOUND_THIEF)
+        return NGSConstants.POLICE_FOUND_THIEF
       }
 
       if (this.noMovesAvailable(policeNodes.last)) {
         gameOver()
-        return "No moves available for police. Police loses."
+        result.addOne(NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.POLICE))
+        return NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.POLICE)
       }
 
       playWithStrategy()
 
-      "Moved police to position"
+      NGSConstants.MOVED_POLICE
     } else {
-      "Failed to move to position"
+      NGSConstants.FAILED_TO_MOVE
     }
   }
 
   def moveThiefToNode(node_id: Int): String = {
-    if(policeNodes.size < thiefNodes.size) return "Police's turn"
+    if(policeNodes.size < thiefNodes.size) return NGSConstants.POLICE_TURN
 
     if(GraphOps.possibleNextMoves(GraphOps.getThiefNode).keys.toList.contains(node_id.toString)) {
       if(!GraphOps.canMoveBePerformedInOriginalGraph(GraphOps.getThiefNode, node_id)) {
         gameOver()
-        return "Move cannot be performed. Thief loses"
+        result.addOne(NGSConstants.MOVE_CANNOT_BE_PERFORMED(NGSConstants.THIEF))
+        return NGSConstants.MOVE_CANNOT_BE_PERFORMED(NGSConstants.THIEF)
       }
 
       thiefNodes.addOne(perturbedGraph.sm.nodes().asScala.filter(node => node_id == node.id).head)
 
       if (this.arePoliceAndThiefOnTheSameNode()) {
         gameOver()
-        return "Police found thief. Police wins"
+        result.addOne(NGSConstants.POLICE_FOUND_THIEF)
+        return NGSConstants.POLICE_FOUND_THIEF
       }
 
       if (this.thiefFoundValuableData()) {
         gameOver()
-        return "Thief found valuable data. Thief wins"
+        result.addOne(NGSConstants.THIEF_FOUND_DATA)
+        return NGSConstants.THIEF_FOUND_DATA
       }
 
       if (this.noMovesAvailable(thiefNodes.last)) {
         gameOver()
-        return "No moves available for thief. Thief loses."
+        result.addOne(NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.THIEF))
+        return NGSConstants.NO_MOVES_AVAILABLE(NGSConstants.THIEF)
       }
 
       playWithStrategy()
 
-      "Moved thief to position"
+      NGSConstants.MOVED_THIEF
     } else {
-      "Failed to move to position"
+      NGSConstants.FAILED_TO_MOVE
     }
   }
 
@@ -206,7 +221,7 @@ object GraphOps {
       visited.add(currentNode)
 
       if (currentNode.valuableData) {
-        return s"Distance from valuable node : ${distance}"
+        return NGSConstants.DISTANCE_FROM_NODE(distance)
       }
 
       val successors = perturbedGraph.sm.adjacentNodes(currentNode).asScala.toList
@@ -217,7 +232,7 @@ object GraphOps {
         }
       })
     }
-    s"Distance from valuable node : -1"
+    NGSConstants.DISTANCE_FROM_NODE(-1)
   }
 
   def getPoliceNode: NodeObject = {

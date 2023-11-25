@@ -20,7 +20,7 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
 
   def gameOver(): DefResponse = {
     GraphOps.gameOver()
-    DefResponse("Reset game")
+    DefResponse(NGSConstants.RESET_GAME)
   }
 
   def initPolice(): Future[DefResponse] =
@@ -54,7 +54,7 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
     thiefRegistry.ask(ThiefActor.Result.apply)
 
   val policeRoutes: Route =
-    pathPrefix("police") {
+    pathPrefix(NGSConstants.PATH_POLICE) {
       concat(
         pathEnd {
           concat(
@@ -63,34 +63,34 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
             }
           )
         },
-        path("possibleMoves") {
+        path(NGSConstants.POSSIBLE_MOVES) {
           get {
             complete(possibleNextMovesPolice())
           }
         },
-        path("findValuableNode") {
+        path(NGSConstants.FIND_VALUABLE_NODE) {
           get {
             complete(findValuableNodePolice())
           }
         },
-        path("findThief") {
+        path(NGSConstants.FIND_THIEF) {
           get {
             complete(findThief())
           }
         },
-        path("result"){
+        path(NGSConstants.RESULT){
           get {
             complete(showResultPolice())
           }
         },
-        pathPrefix("move") {
+        pathPrefix(NGSConstants.MOVE) {
           path(IntNumber) { node_id =>
             get {
               complete(movePoliceToNode(node_id))
             }
           }
         },
-        pathPrefix("strategy") {
+        pathPrefix(NGSConstants.STRATEGY) {
           path(Segment) { str =>
             get {
               complete(playStrategyPolice(str))
@@ -101,7 +101,7 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
     }
 
   val thiefRoutes: Route =
-    pathPrefix("thief") {
+    pathPrefix(NGSConstants.PATH_THIEF) {
       concat(
         pathEnd {
           concat(
@@ -110,34 +110,34 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
             }
           )
         },
-        path("possibleMoves") {
+        path(NGSConstants.POSSIBLE_MOVES) {
           get {
             complete(possibleNextMovesThief())
           }
         },
-        path("findValuableNode") {
+        path(NGSConstants.FIND_VALUABLE_NODE) {
           get {
             complete(findValuableNodeThief())
           }
         },
-        path("findPolice") {
+        path(NGSConstants.FIND_POLICE) {
           get {
             complete(findPolice())
           }
         },
-        path("result") {
+        path(NGSConstants.RESULT) {
           get {
             complete(showResultThief())
           }
         },
-        pathPrefix("move") {
+        pathPrefix(NGSConstants.MOVE) {
           path(IntNumber) { node_id =>
             get {
               complete(moveThiefToNode(node_id))
             }
           }
         },
-        pathPrefix("strategy") {
+        pathPrefix(NGSConstants.STRATEGY) {
           path(Segment) { str =>
             get {
               complete(playStrategyThief(str))
@@ -148,7 +148,7 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
     }
 
   val routes: Route = concat(policeRoutes, thiefRoutes,
-    path("restart") {
+    path(NGSConstants.RESTART) {
     get {
       complete(gameOver())
     }

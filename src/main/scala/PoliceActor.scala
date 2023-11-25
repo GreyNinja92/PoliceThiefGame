@@ -1,10 +1,7 @@
-import NetGraphAlgebraDefs.NodeObject
 import ThiefActor.Command
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-
-import scala.collection.immutable
 
 final case class Police(id: Int, node_id: Int)
 final case class NextMoves(moves: Map[String, String])
@@ -37,14 +34,14 @@ object PoliceActor {
         replyTo ! DefResponse(GraphOps.findNearestNodeWithValue(GraphOps.getPoliceNode))
         Behaviors.same
       case FindThief(replyTo) =>
-        replyTo ! DefResponse(s"Thief is at node ${GraphOps.getThiefNode.id}")
+        replyTo ! DefResponse(NGSConstants.OTHER_PLAYER_LOCATION(GraphOps.getThiefNode.id, NGSConstants.THIEF))
         Behaviors.same
       case Strategy(str, replyTo) =>
-        if (str == "safe" || str == "random") {
-          replyTo ! DefResponse(s"Playing with strategy: ${str}")
+        if (str == NGSConstants.SAFE || str == NGSConstants.RANDOM) {
+          replyTo ! DefResponse(NGSConstants.PLAYING_WITH_STRATEGY(str))
           GraphOps.initializeStrategy(isThief = false, str)
         } else {
-          replyTo ! DefResponse("Enter a valid strategy")
+          replyTo ! DefResponse(NGSConstants.ENTER_VALID_STRATEGY)
         }
         Behaviors.same
       case Result(replyTo) =>
@@ -52,10 +49,10 @@ object PoliceActor {
           if (GraphOps.result.nonEmpty) {
             replyTo ! DefResponse(GraphOps.result.last)
           } else {
-            replyTo ! DefResponse("Still playing game")
+            replyTo ! DefResponse(NGSConstants.STILL_PLAYING_GAME)
           }
         } else {
-          replyTo ! DefResponse("Set a strategy first")
+          replyTo ! DefResponse(NGSConstants.SET_STRATEGY_FIRST)
         }
         Behaviors.same
     }

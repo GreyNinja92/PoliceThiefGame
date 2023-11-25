@@ -1,14 +1,13 @@
 import NetGraphAlgebraDefs.NodeObject
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer
-import scala.jdk.CollectionConverters._
 import scala.io.Source
-import java.io.{File, PrintWriter}
-import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, HashSet, ListBuffer}
 import org.yaml.snakeyaml.Yaml
 
 object OutputParser {
+  val logger: Logger = LoggerFactory.getLogger(OutputParser.getClass)
+
   val oNodeAdded = ArrayBuffer[Int]()
   val oNodeRemoved = ArrayBuffer[Int]()
   val oNodeModified = ArrayBuffer[Int]()
@@ -32,11 +31,10 @@ object OutputParser {
   }
 
   def parseGoldenYAML(fileName: String): Unit = {
-//    logger.info("Parsing the original yaml file")
+    logger.info("Parsing the original yaml file")
     val source = Source.fromFile("difference.yaml")
     val lines = source.getLines().mkString("\n").replace("\t", " " * 4)
 
-    val yamlString = ""
     val yaml = new Yaml()
     val data = yaml.load(lines).asInstanceOf[java.util.Map[String, Any]]
     val nodes = data.get(NGSConstants.NODES).asInstanceOf[java.util.Map[String, Any]]
@@ -49,13 +47,5 @@ object OutputParser {
     oEdgesModified.addAll(edgesHelper(Option(edges.get(NGSConstants.MODIFIED).asInstanceOf[java.util.Map[Integer, Integer]])))
     oEdgesAdded.addAll(edgesHelper(Option(edges.get(NGSConstants.ADDED).asInstanceOf[java.util.Map[Integer, Integer]])))
     oEdgesRemoved.addAll(edgesHelper(Option(edges.get(NGSConstants.REMOVED).asInstanceOf[java.util.Map[Integer, Integer]])))
-
-    println("BOOM")
-    println(oNodeAdded)
-    println(oNodeModified)
-    println(oNodeRemoved)
-    println(oEdgesAdded)
-    println(oEdgesModified)
-    println(oEdgesRemoved)
   }
 }
