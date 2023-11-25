@@ -10,6 +10,7 @@ import akka.util.Timeout
 import PoliceActor._
 import ThiefActor._
 
+// This class contains all routes for the api
 class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: ActorRef[ThiefActor.Command])
                (implicit val system: ActorSystem[_]) {
 

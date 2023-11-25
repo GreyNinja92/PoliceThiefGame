@@ -4,7 +4,12 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "2.13.12"
 
+enablePlugins(JavaAppPackaging)
+
 resolvers += "Akka library repository".at("https://repo.akka.io/maven")
+
+Compile / mainClass := Some("Main")
+run / mainClass := Some("Main")
 
 val scalaTestVersion = "3.2.17"
 val typeSafeConfigVersion = "1.4.2"
@@ -56,4 +61,5 @@ assembly/assemblyJarName := jarName
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
+  case "reference.conf" => MergeStrategy.concat
 }

@@ -12,6 +12,8 @@ import scala.util.Success
 
 object Main {
   val logger: Logger = LoggerFactory.getLogger(Main.getClass)
+
+  // Initialize HTTP Server
   private def startHttpServer(routes: Route)(implicit system: ActorSystem[_]): Unit = {
     // Akka HTTP still needs a classic ActorSystem to start
     import system.executionContext
@@ -28,8 +30,10 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
+    // Parse difference.yaml
     OutputParser.parseGoldenYAML(NGSConstants.DIFFERENCE_YAML)
 
+    // Start HTTP Server
     val rootBehavior = Behaviors.setup[Nothing] { context =>
       val policeActor = context.spawn(PoliceActor(), NGSConstants.POLICE_ACTOR)
       val thiefActor = context.spawn(ThiefActor(), NGSConstants.THIEF_ACTOR)

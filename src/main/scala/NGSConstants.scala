@@ -12,6 +12,7 @@ object NGSConstants {
   val POLICE_ACTOR = "policeActor"
   val THIEF_ACTOR = "thiefActor"
 
+  val AWS_URL = "0.0.0.0"
   val URL = "localhost"
 
   val THIEF = "Thief"
