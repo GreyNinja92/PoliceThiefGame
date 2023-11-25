@@ -12,8 +12,8 @@ object GraphOps {
   val logger: Logger = LoggerFactory.getLogger(GraphOps.getClass)
 
   // Loading the original & perturbed graphs
-  val originalGraph: NetGraph = NetGraph.loadGraph(dir="", fileName = NGSConstants.ORIGINAL_GRAPH).get
-  val perturbedGraph: NetGraph = NetGraph.loadGraph(dir="", fileName = NGSConstants.PERTURBED_GRAPH).get
+  val originalGraph: NetGraph = Deserializer.loadGraph(dir="", fileName = NGSConstants.ORIGINAL_GRAPH).get
+  val perturbedGraph: NetGraph = Deserializer.loadGraph(dir="", fileName = NGSConstants.PERTURBED_GRAPH).get
 
   // These arrays are used to store the current & past locations of police & thief
   val policeNodes: ArrayBuffer[NodeObject] = ArrayBuffer[NodeObject]()

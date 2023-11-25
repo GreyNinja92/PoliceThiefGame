@@ -1,6 +1,5 @@
 .DS_Store
 
-*.ngs
 output/
 log/
 dist/*
