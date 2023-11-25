@@ -7,6 +7,7 @@ final case class Police(id: Int, node_id: Int)
 final case class NextMoves(moves: Map[String, String])
 final case class DefResponse(response: String)
 
+// Police Actor
 object PoliceActor {
   sealed trait Command
   final case class InitializePolice(replyTo: ActorRef[DefResponse]) extends Command
@@ -19,6 +20,7 @@ object PoliceActor {
 
   def apply(): Behavior[Command] = registry(Set.empty)
 
+  // This function calls the respective functions in GraphOps after the api receives a request
   private def registry(policeActors: Set[Police]): Behavior[Command] =
     Behaviors.receiveMessage {
       case InitializePolice(replyTo) =>

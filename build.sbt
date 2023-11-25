@@ -35,6 +35,14 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.yaml" % "snakeyaml" % "2.0"
 
+libraryDependencies += "io.circe" %% "circe-parser" % "0.14.1"
+libraryDependencies += "io.circe" %% "circe-core" % "0.14.1"
+libraryDependencies += "io.circe" %% "circe-generic" % "0.14.1"
+
+libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "3.3.6"
+libraryDependencies += "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "3.3.6"
+libraryDependencies += "org.apache.hadoop" % "hadoop-mapreduce-client-jobclient" % "3.3.6"
+
 lazy val root = (project in file("."))
   .settings(
     name := "cc3"

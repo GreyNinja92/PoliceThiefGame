@@ -5,6 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import org.yaml.snakeyaml.Yaml
 
+// This class parses difference.yaml file
 object OutputParser {
   val logger: Logger = LoggerFactory.getLogger(OutputParser.getClass)
 
@@ -26,10 +27,14 @@ object OutputParser {
     }
   }
 
-  def isNodeModified(node: NodeObject): Boolean = {
+  // This function checks if the node passed as a parameter was modified or added or removed in the perturbed graph
+  def isNodeChanged(node: NodeObject): Boolean = {
     oNodeAdded.contains(node.id) || oNodeModified.contains(node.id) || oNodeRemoved.contains(node.id)
   }
 
+  // This function parses the golden yaml file i.e. the original yaml file containing all the perturbations.
+  // I'm using snakeyaml for parsing and separating data. I split the yaml file into added nodes, modified nodes & removed nodes.
+  // In the end, I store all information in the file to all the 'o' data structures initialized above.
   def parseGoldenYAML(fileName: String): Unit = {
     logger.info("Parsing the original yaml file")
     val source = Source.fromFile("difference.yaml")

@@ -1,3 +1,4 @@
+// Stores constants for the entire application
 object NGSConstants {
   val SERVER = "GameServer"
   val ORIGINAL_GRAPH = "original.json"
@@ -6,6 +7,7 @@ object NGSConstants {
 
   val NODES: String = "Nodes"
   val EDGES: String = "Edges"
+  val NEW_LINE = "\n"
 
   val POLICE_ACTOR = "policeActor"
   val THIEF_ACTOR = "thiefActor"

@@ -5,6 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 
 final case class Thief(id: Int, node_id: Int)
 
+// Thief Actor
 object ThiefActor {
   sealed trait Command
   final case class InitializeThief(replyTo: ActorRef[DefResponse]) extends Command
@@ -18,6 +19,7 @@ object ThiefActor {
 
   def apply(): Behavior[Command] = registry(Set.empty)
 
+  // This function calls the respective functions in GraphOps after the api receives a request
   private def registry(thiefActors: Set[Thief]): Behavior[Command] =
     Behaviors.receiveMessage {
       case InitializeThief(replyTo) =>
