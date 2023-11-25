@@ -44,12 +44,10 @@ object Deserializer {
   }
 
   def loadGraph(dir: String, fileName: String): Option[NetGraph] = {
-    // Using Hadoop FileSystem and InputStream for both AWS & Local Machine
     val conf = new Configuration()
-    //    AWS EMR
-    //    val fileSystem = FileSystem.get(java.net.URI.create(dir), conf)
     val fileSystem = FileSystem.get(conf)
     val fsDataInputStream = fileSystem.open(new Path(dir.concat(fileName)))
+
     // Loading json and converting them to strings
     val json = Source.fromInputStream(fsDataInputStream).mkString
     val arr = json.split(NGSConstants.NEW_LINE)

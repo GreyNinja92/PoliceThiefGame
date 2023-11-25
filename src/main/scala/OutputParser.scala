@@ -37,7 +37,7 @@ object OutputParser {
   // In the end, I store all information in the file to all the 'o' data structures initialized above.
   def parseGoldenYAML(fileName: String): Unit = {
     logger.info("Parsing the original yaml file")
-    val source = Source.fromFile("difference.yaml")
+    val source = Source.fromFile(fileName)
     val lines = source.getLines().mkString("\n").replace("\t", " " * 4)
 
     val yaml = new Yaml()

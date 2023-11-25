@@ -17,7 +17,7 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import JsonFormats._
 
-  private implicit val timeout: Timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
+  private implicit val timeout: Timeout = Timeout.create(system.settings.config.getDuration("app.routes.ask-timeout"))
 
   def gameOver(): DefResponse = {
     GraphOps.gameOver()
@@ -54,6 +54,7 @@ class GameRoute(policeRegistry: ActorRef[PoliceActor.Command], thiefRegistry: Ac
   def showResultThief(): Future[DefResponse] =
     thiefRegistry.ask(ThiefActor.Result.apply)
 
+  // These routes are explained in README
   val policeRoutes: Route =
     pathPrefix(NGSConstants.PATH_POLICE) {
       concat(

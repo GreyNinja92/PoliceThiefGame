@@ -1,9 +1,14 @@
 // Stores constants for the entire application
+import Utilz.ConfigReader.getConfigEntry
+import com.typesafe.config.{Config, ConfigFactory}
+
 object NGSConstants {
+  private val config: Config = ConfigFactory.load()
   val SERVER = "GameServer"
-  val ORIGINAL_GRAPH = "original.json"
-  val PERTURBED_GRAPH = "perturbed.json"
-  val DIFFERENCE_YAML = "difference.yaml"
+
+  val ORIGINAL_GRAPH = getConfigEntry(config, "ORIGINAL_GRAPH", "original.json")
+  val PERTURBED_GRAPH = getConfigEntry(config, "PERTURBED_GRAPH", "perturbed.json")
+  val DIFFERENCE_YAML = getConfigEntry(config, "DIFFERENCE_YAML", "difference.yaml")
 
   val NODES: String = "Nodes"
   val EDGES: String = "Edges"
@@ -24,8 +29,6 @@ object NGSConstants {
   val ADDED: String = "Added"
   val MODIFIED: String = "Modified"
   val REMOVED: String = "Removed"
-  val PERTURBED = ".perturbed"
-  val OUTPUTDIRECTORY = "output"
 
   val INITIALIZED_THIEF = "Initialized Thief"
   val INITIALIZED_POLICE = "Initialized Police"

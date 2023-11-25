@@ -1,6 +1,3 @@
-import NetGraphAlgebraDefs.GraphPerturbationAlgebra.ModificationRecord
-import NetGraphAlgebraDefs.NetModelAlgebra.{actionType, outputDirectory}
-import NetGraphAlgebraDefs.{GraphPerturbationAlgebra, NetGraph, NetModelAlgebra, NodeObject}
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
@@ -18,6 +15,8 @@ object Main {
     // Akka HTTP still needs a classic ActorSystem to start
     import system.executionContext
 
+//    AWS EC2
+//    val futureBinding = Http().newServerAt(NGSConstants.AWS_URL, 8080).bind(routes)
     val futureBinding = Http().newServerAt(NGSConstants.URL, 8080).bind(routes)
     futureBinding.onComplete {
       case Success(binding) =>
